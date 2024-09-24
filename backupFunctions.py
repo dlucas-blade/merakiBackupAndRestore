@@ -588,8 +588,11 @@ def backupSwitchPortConfigs(net, dir, dashboard, logger):
                     if port['type']=='access':
                         if port['accessPolicyType']!='Open':
                             for policy in access_policies:
-                                if policy['accessPolicyNumber']==port['accessPolicyNumber']:
-                                    port['accessPolicyNumber']=policy['name']
+                                try:
+                                    if policy['accessPolicyNumber']==port['accessPolicyNumber']:
+                                        port['accessPolicyNumber']=policy['name']
+                                except KeyError as e:
+                                    logger.warn(e)
                     if port['portScheduleId'] != None:
                         for schedule in port_schedules:
                             if schedule['id']==port['portScheduleId']:
