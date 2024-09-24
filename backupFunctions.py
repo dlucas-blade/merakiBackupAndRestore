@@ -1341,12 +1341,21 @@ def backupSwitchStormControl(net, dir, dashboard, logger):
             os.makedirs(f'{dir}/network/{net["name"]}/switch')
         if not os.path.exists(f'{dir}/network/{net["name"]}/switch/switch_settings'):
             os.makedirs(f'{dir}/network/{net["name"]}/switch/switch_settings')
-        # Get all switch Storm Control Settings
-        switch_storm_control = dashboard.switch.getNetworkSwitchStormControl(networkId=net['id'])
-        with open(f'{dir}/network/{net["name"]}/switch/switch_settings/switch_storm_control.json', 'w') as fp:
-            json.dump(switch_storm_control, fp)
-            fp.close()
-        operation['status'] = "Complete"
+        # Get all switch Storm Control Settings if network has switches
+        HAS_SW = 0
+        if 'switch' in net['productTypes']:
+            devices = dashboard.networks.getNetworkDevices(networkId=net['id'])
+            # Exclude Layer 2 switches
+            for device in devices:
+                # Exclude MS1xx devices in their entirety as they are Layer2
+                if 'MS' in device['model'] and ('MS1') not in device['model']:
+                    HAS_SW = 1
+        if HAS_SW == 1:
+            switch_storm_control = dashboard.switch.getNetworkSwitchStormControl(networkId=net['id'])
+            with open(f'{dir}/network/{net["name"]}/switch/switch_settings/switch_storm_control.json', 'w') as fp:
+                json.dump(switch_storm_control, fp)
+                fp.close()
+            operation['status'] = "Complete"
     except meraki.APIError as e:
         logger.error(e)
         operation['status'] = e
