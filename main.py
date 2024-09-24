@@ -86,10 +86,17 @@ def read_nets(dashboard, operation, org_id, tag):
 
 if __name__ == "__main__":
     dashboard = meraki.DashboardAPI(config.API_KEY, maximum_retries=100, print_console=config.console_logging)
-    print('Welcome to the Meraki Backup and Restore tool. Please select an option:')
-    print('1 - Backup my Meraki networks')
-    print('2 - Restore my Meraki networks to an existing backup')
-    option = int(input("Enter the option number: "))
+    while True:
+        try:
+            print('Welcome to the Meraki Backup and Restore tool. Please select an option:')
+            print('1 - Backup my Meraki networks')
+            print('2 - Restore my Meraki networks to an existing backup')
+            option = int(input("Enter the option number: "))
+            if option < 1 or option > 2:
+                raise ValueError
+            break
+        except ValueError:
+            print(f"Invalid option {option}!\n")
     if option == 1:
         org = read_orgs(dashboard, 'backup')
         nets, proceed = read_nets(dashboard, 'backup', org['id'], tag=config.backup_tag)
