@@ -120,8 +120,10 @@ def merakiBackup(dir, org, networks, dashboard, logger):
         operations.append(backupNetworkWebhooks(net=net, dir=dir, dashboard=dashboard, logger=logger))
         logger.info("Backing up Network Syslog settings...")
         operations.append(backupNetworkSyslog(net=net, dir=dir, dashboard=dashboard, logger=logger))
-        logger.info("Backing up Network SNMP settings...")
-        operations.append(backupNetworkSnmp(net=net, dir=dir, dashboard=dashboard, logger=logger))
+        # Don't try and get snmp settings for systemsManager types
+        if 'systemsManager' not in net['productTypes']:
+            logger.info("Backing up Network SNMP settings...")
+            operations.append(backupNetworkSnmp(net=net, dir=dir, dashboard=dashboard, logger=logger))
         logger.info("Backing up Network Firmware Version settings...")
         operations.append(backupNetworkFirmwareVersions(net=net, dir=dir, dashboard=dashboard, logger=logger))
     return operations
