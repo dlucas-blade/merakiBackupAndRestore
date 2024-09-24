@@ -43,22 +43,31 @@ def read_orgs(dashboard, operation):
     organizations = dashboard.organizations.getOrganizations()
     if config.org_number_filter!=['']:
         orgs = [org for org in organizations if org['id'] in config.org_number_filter]
+        short_orgs = []
+        for myorg in orgs:
+            short_orgs.append({'Company ID': myorg['id'], 'Company Name': myorg['name']})
         print("Your API Key has access to the following organizations (filtered by config.org_number_filter): ")
-        print_tabulate(orgs)
+        print_tabulate(short_orgs)
         choice = int(input(f"Which organization do you want to perform a {operation} on? (Enter the table row number): "))
         org = orgs[choice]
         print(f"Working on organization {org['name']} - {org['id']}.")
     elif config.org_name_filter != '':
         orgs = [org for org in organizations if config.org_name_filter in org['name']]
+        short_orgs = []
+        for myorg in orgs:
+            short_orgs.append({'Company ID': myorg['id'], 'Company Name': myorg['name']})
         print("Your API Key has access to the following organizations (filtered by config.org_name_filter): ")
-        print_tabulate(orgs)
+        print_tabulate(short_orgs)
         choice = int(input(f"Which organization do you want to perform a {operation} on? (Enter the table row number): "))
         org = orgs[choice]
         print(f"Working on organization {org['name']} - {org['id']}.")
     else:
         orgs = organizations
+        short_orgs = []
+        for myorg in orgs:
+            short_orgs.append({'Company ID': myorg['id'], 'Company Name': myorg['name']})
         print("Your API Key has access to the following organizations: ")
-        print_tabulate(orgs)
+        print_tabulate(short_orgs)
         choice = int(input(f"Which organization do you want to perform a {operation} on? (Enter the table row number): "))
         org = orgs[choice]
         print(f"Working on organization {org['name']} - {org['id']}.")
