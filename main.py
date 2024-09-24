@@ -75,8 +75,11 @@ def read_orgs(dashboard, operation):
 
 def read_nets(dashboard, operation, org_id, tag):
     nets = dashboard.organizations.getOrganizationNetworks(organizationId=org_id, tags=[tag])
+    short_nets = []
+    for mynet in nets:
+        short_nets.append({'Network ID': mynet['id'], 'Network Name': mynet['name'], 'Notes': mynet['notes']})
     print(f"Performing a {operation} operation on the following networks with the tag {tag}: ")
-    print_tabulate(nets)
+    print_tabulate(short_nets)
     proceed = input("Proceed? (Y/N): ")
     return nets, proceed
 
