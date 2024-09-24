@@ -1300,7 +1300,8 @@ def backupSwitchStaticRouting(net, dir, dashboard, logger):
         devices = dashboard.networks.getNetworkDevices(networkId=net['id'])
         # If device is an MS that supports static routes, get their static routes
         for device in devices:
-            if 'MS' in device['model'] and ('120' or '125') not in device['model']:
+            # Exclude MS1xx devices in their entirety as they are Layer2
+            if 'MS' in device['model'] and ('MS1') not in device['model']:
                 static_routes = dashboard.switch.getDeviceSwitchRoutingStaticRoutes(serial=device['serial'])
                 if not os.path.exists(f'{dir}/network/{net["name"]}/switch/switch_routing/{device["serial"]}'):
                     os.makedirs(f'{dir}/network/{net["name"]}/switch/switch_routing/{device["serial"]}')
