@@ -106,7 +106,8 @@ def merakiBackup(dir, org, networks, dashboard, logger):
             operations.append(backupSwitchStormControl(net=net, dir=dir, dashboard=dashboard, logger=logger))
 
         # Backup Network Settings
-        if 'switch' or 'appliance' or 'wireless' in net['productTypes']:
+        # switch no longer applies here, only appliance or wireless are valid now
+        if 'appliance' in net['productTypes'] or 'wireless' in net['productTypes']:
             logger.info("Backing up Network Group Policy settings...")
             operations.append(backupNetworkGroupPolicies(net=net, dir=dir, dashboard=dashboard, logger=logger))
         logger.info("Backing up Network Alert settings...")
