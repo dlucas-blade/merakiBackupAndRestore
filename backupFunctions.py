@@ -17,8 +17,10 @@ def merakiBackup(dir, org, networks, dashboard, logger):
     # Backup Org Settings
     logger.info("Backing up organization settings...")
     operations.append(backupOrganizationPolicyObjects(org=org, dir=dir, dashboard=dashboard, logger=logger))
-    operations.append(backupOrganizationMxIpsecVpn(org=org, dir=dir, dashboard=dashboard, logger=logger))
-    operations.append(backupOrganizationMxVpnFirewall(org=org, dir=dir, dashboard=dashboard, logger=logger))
+    # Only get org VPN settings if organization has an MX
+    if orgHasMX(org, networks, dashboard) == 1:
+        operations.append(backupOrganizationMxIpsecVpn(org=org, dir=dir, dashboard=dashboard, logger=logger))
+        operations.append(backupOrganizationMxVpnFirewall(org=org, dir=dir, dashboard=dashboard, logger=logger))
     for net in networks:
         # Backup MX Settings
         logger.info(f"Backing up settings for network {net['name']}...")
@@ -127,6 +129,13 @@ def merakiBackup(dir, org, networks, dashboard, logger):
         logger.info("Backing up Network Firmware Version settings...")
         operations.append(backupNetworkFirmwareVersions(net=net, dir=dir, dashboard=dashboard, logger=logger))
     return operations
+
+def orgHasMX(org, networks, dashboard):
+    HAS_MX = 0
+    for net in networks:
+        if 'appliance' in net['productTypes']:
+            HAS_MX = 1
+    return(HAS_MX)
 
 def backupNetworkDevices(net, dir, dashboard, logger):
     """
