@@ -334,9 +334,14 @@ def backupMxSecurity(net, dir, dashboard, logger):
             json.dump(ips, fp)
             fp.close()
         operation['status'] = "Complete"
-    except meraki.APIError as e:
-        logger.error(e)
-        operation['status'] = e
+        except meraki.APIError as e:
+        if "400 Bad Request" in str(e) and "AMP" in str(e) and "IPS" not in str(e):
+            operation["status"] = "Complete (AMP Not Supported)"
+        elif "400 Bad Request" in str(e) and "IPS" in str(e):
+            operation["status"] =  "Not Supported)"
+        else:
+            logger.error(e)
+            operation["status"]=e
     except Exception as e:
         logger.error(e)
         operation["status"]=e
