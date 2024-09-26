@@ -92,7 +92,7 @@ if __name__ == "__main__":
             print('1 - Backup my Meraki networks')
             print('2 - Restore my Meraki networks to an existing backup')
             option = str(input("Enter the option number: "))
-            if option != '1' or option != '2' or option != 'q' or option != 'Q':
+            if option != '1' and option != '2' and option != 'q' and option != 'Q':
                 raise ValueError
             break
         except ValueError:
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         else:
             print("Invalid selection!")
             sys.exit()
-    elif option == 'q' or opttion == 'Q':
+    elif option == 'q' or option == 'Q':
         print("Exiting...")
         sys.exit()
     else:
