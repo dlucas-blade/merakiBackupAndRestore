@@ -1805,6 +1805,8 @@ def backupMrWirelessSettings(net, dir, dashboard, logger):
     except Exception as e:
         logger.error(e)
         operation["status"]=e
+    if operation['status'] == "":
+        operation['status'] = "Complete (Not Supported)"
     return operation
 
 def backupSwitchSettings(net, dir, dashboard, logger):
