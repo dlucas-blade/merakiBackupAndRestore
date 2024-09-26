@@ -7,6 +7,7 @@ import meraki.aio
 import json
 import time
 import os
+import shutil
 import sys
 import logging
 import logging_class
@@ -119,6 +120,10 @@ if __name__ == "__main__":
                 print_ops.append({'Type': myop[1], 'Operation': myop[2], 'Status': myop[3]})
             print_tabulate(print_ops)
             backup_operations_df.to_csv(f'{backup_path}/backup_operations.csv')
+            if config.zip_backup == True:
+                print(f"Creating archive {backup_path}.zip...")
+                shutil.make_archive(backup_path, 'zip', backup_path)
+                shutil.rmtree(backup_path)
         elif proceed == 'N' or proceed == 'n':
             print("Stopping backup!")
             sys.exit()
