@@ -1370,6 +1370,8 @@ def backupSwitchStormControl(net, dir, dashboard, logger):
                 json.dump(switch_storm_control, fp)
                 fp.close()
             operation['status'] = "Complete"
+        else:
+            operation['status'] = "Complete (L2 Not Supported)"
     except meraki.APIError as e:
         logger.error(e)
         operation['status'] = e
