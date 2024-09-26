@@ -113,8 +113,11 @@ if __name__ == "__main__":
                 fp.close()
             backup_operations = backupFunctions.merakiBackup(dir=backup_path, org=org, networks=nets, dashboard=dashboard, logger=logger)
             backup_operations_df = pd.DataFrame(backup_operations)
-            #print_tabulate(backup_operations_df)
-            print(backup_operations_df)
+            myops = backup_operations_df.values.tolist()
+            print_ops = []
+            for myop in myops:
+                print_ops.append({'Type': myop[1], 'Operation': myop[2], 'Status': myop[3]})
+            print_tabulate(print_ops)
             backup_operations_df.to_csv(f'{backup_path}/backup_operations.csv')
     elif option == 2:
         org = read_orgs(dashboard, 'restore')
