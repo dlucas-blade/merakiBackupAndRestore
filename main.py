@@ -91,18 +91,18 @@ if __name__ == "__main__":
             print('Welcome to the Meraki Backup and Restore tool. Please select an option:')
             print('1 - Backup my Meraki networks')
             print('2 - Restore my Meraki networks to an existing backup')
-            option = int(input("Enter the option number: "))
-            if option < 1 or option > 2:
+            option = str(input("Enter the option number: "))
+            if option != '1' or option != '2' or option != 'q' or option != 'Q':
                 raise ValueError
             break
         except ValueError:
             print(f"Invalid option {option}!\n")
-    if option == 1:
+    if option == '1':
         org = read_orgs(dashboard, 'backup')
         nets, proceed = read_nets(dashboard, 'backup', org['id'], tag=config.backup_tag)
         timestr = datetime.now().isoformat()
         backup_path = f"{config.backup_directory}/{org['id']}_{org['name']}_{timestr.replace(':', '-')}"
-        if proceed == 'Y':
+        if proceed == 'Y' or proceed == 'y':
             if not os.path.exists(config.backup_directory):
                 os.makedirs(config.backup_directory)
             if not os.path.exists(backup_path):
@@ -119,7 +119,13 @@ if __name__ == "__main__":
                 print_ops.append({'Type': myop[1], 'Operation': myop[2], 'Status': myop[3]})
             print_tabulate(print_ops)
             backup_operations_df.to_csv(f'{backup_path}/backup_operations.csv')
-    elif option == 2:
+        elif proceed == 'N' or proceed == 'n':
+            print("Stopping backup!")
+            sys.exit()
+        else:
+            print("Invalid selection!")
+            sys.exit()
+    elif option == '2':
         org = read_orgs(dashboard, 'restore')
         nets, proceed = read_nets(dashboard, 'restore', org['id'], tag=config.restore_tag)
         print('Found the following backups in the backup directory: ')
@@ -146,19 +152,22 @@ if __name__ == "__main__":
         definitive_set = restore_set & backup_set
         print(f"Out of all networks with the tag {config.restore_tag} in {org['name']}, only {definitive_set} were found in the selected backup.")
         proceed = input("Do you wish to proceed? (Y/N): ")
-        if proceed=='Y':
+        if proceed == 'Y' or proceed == 'y':
             restore_nets = [net for net in nets if net['name'] in definitive_set]
             print(restore_nets)
             restore_operations = restoreFunctions.merakiRestore(org=org['id'], dir=restore_path,nets=restore_nets,dashboard=dashboard, logger=logger)
             restore_operations_df = pd.DataFrame(restore_operations)
             print_tabulate(restore_operations_df)
             restore_operations_df.to_csv(f'{restore_path}/restore_operations.csv')
-        elif proceed=='N':
+        elif proceed == 'N' or proceed == 'n':
             print("Stopping restore!")
             sys.exit()
         else:
             print("Invalid selection!")
             sys.exit()
+    elif option == 'q' or opttion == 'Q':
+        print("Exiting...")
+        sys.exit()
     else:
         print("Invalid selection!")
         sys.exit()
