@@ -7,6 +7,7 @@ import meraki.aio
 import json
 import time
 import os
+import re
 import shutil
 import sys
 import logging
@@ -117,7 +118,13 @@ if __name__ == "__main__":
             myops = backup_operations_df.values.tolist()
             print_ops = []
             for myop in myops:
-                print_ops.append({'Type': myop[1], 'Operation': myop[2], 'Status': myop[3]})
+                # Don't mess with pandas, string extract is easier
+                mat = re.search(r"\'name\'\:\ \'.*?\'",str(myop[0]))
+                if mat:
+                    coname = str(mat.group(0)).replace("'name': '","").replace("'","")
+                else:
+                    coname = ""
+                print_ops.append({'Name': coname, 'Type': myop[1], 'Operation': myop[2], 'Status': myop[3]})
             print_tabulate(print_ops)
             backup_operations_df.to_csv(f'{backup_path}/backup_operations.csv')
             if config.zip_backup == True:
